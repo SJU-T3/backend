@@ -1,0 +1,43 @@
+package com.example.demo.calendar.service;
+
+import com.example.demo.calendar.entity.Transaction;
+import com.example.demo.calendar.repository.TransactionRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+
+@Service
+@Transactional
+public class TransactionService {
+
+    private final TransactionRepository transactionRepository;
+    private final DaySummaryService daySummaryService;
+
+    public TransactionService(TransactionRepository transactionRepository,
+                              DaySummaryService daySummaryService) {
+        this.transactionRepository = transactionRepository;
+        this.daySummaryService = daySummaryService;
+    }
+
+    // 🔥 로그인한 userId를 받아서 저장하는 방식으로 변경됨
+    public Transaction save(Long userId, Transaction tx) {
+
+        // 1) 거래에 userId 세팅
+        tx.setUserId(userId);
+
+        // 2) 거래 저장
+        Transaction saved = transactionRepository.save(tx);
+
+        // 3) DaySummary 자동 업데이트
+        LocalDate date = tx.getDateTime().toLocalDate();
+
+        if (tx.getIncomeOrExpense() == Transaction.IncomeType.INCOME) {
+            daySummaryService.addIncome(userId, date, tx.getPrice());
+        } else {
+            daySummaryService.addExpense(userId, date, tx.getPrice());
+        }
+
+        return saved;
+    }
+}
