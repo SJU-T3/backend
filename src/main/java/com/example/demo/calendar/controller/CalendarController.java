@@ -3,9 +3,11 @@ package com.example.demo.calendar.controller;
 import com.example.demo.calendar.dto.MonthlyResponse;
 import com.example.demo.calendar.entity.Transaction;
 import com.example.demo.calendar.entity.DaySummary;
+import com.example.demo.calendar.entity.Report;
 import com.example.demo.calendar.repository.TransactionRepository;
 import com.example.demo.calendar.service.TransactionService;
 import com.example.demo.calendar.service.DaySummaryService;
+import com.example.demo.calendar.service.ReportService;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -21,13 +23,16 @@ public class CalendarController {
     private final TransactionService transactionService;
     private final TransactionRepository transactionRepository;
     private final DaySummaryService daySummaryService;
+    private final ReportService reportService;
 
     public CalendarController(TransactionService transactionService,
                               TransactionRepository transactionRepository,
-                              DaySummaryService daySummaryService) {
+                              DaySummaryService daySummaryService,
+                              ReportService reportService ) {
         this.transactionService = transactionService;
         this.transactionRepository = transactionRepository;
         this.daySummaryService = daySummaryService;
+        this.reportService = reportService;
     }
 
     // =============================================
@@ -68,5 +73,23 @@ public class CalendarController {
             @PathVariable int month
     ) {
         return daySummaryService.getMonthlySummaryWithTotal(userId, year, month);
+    }
+
+    @PostMapping("/report/{year}/{month}")
+    public Report generateReport(
+            @AuthenticationPrincipal Long userId,
+            @PathVariable int year,
+            @PathVariable int month
+    ) throws Exception {
+        return reportService.generateReport(userId, year, month);
+    }
+
+    @GetMapping("/report/{year}/{month}")
+    public Report getReport(
+            @AuthenticationPrincipal Long userId,
+            @PathVariable int year,
+            @PathVariable int month
+    ) {
+        return reportService.getReport(userId, year, month);
     }
 }
