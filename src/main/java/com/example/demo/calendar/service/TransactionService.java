@@ -44,7 +44,7 @@ public class TransactionService {
             System.out.println("[TX] expense detected. Checking goal...");
 
             daySummaryService.addExpense(userId, date, tx.getPrice());
-            goalService.checkAndIncrease(userId, tx.getItemName());
+            goalService.checkAndIncrease(userId, tx.getItemName(), tx.getDateTime().toLocalDate());
         }
 
         return saved;

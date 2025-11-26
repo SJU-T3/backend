@@ -36,10 +36,10 @@ public class GoalService {
     /**
      * 소비가 추가될 때 목표와 AI 매칭해 currentCount 증가
      */
-    public void checkAndIncrease(Long userId, String itemName) {
+    public void checkAndIncrease(Long userId, String itemName, LocalDate txDate) {
 
 
-        LocalDate monthKey = LocalDate.now().withDayOfMonth(1);
+        LocalDate monthKey = txDate.withDayOfMonth(1);
 
         System.out.println("[GOAL] Checking goal for userId=" + userId);
         System.out.println("[GOAL] Searching monthKey=" + monthKey);
