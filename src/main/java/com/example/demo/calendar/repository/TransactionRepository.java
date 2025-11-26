@@ -17,4 +17,17 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
     // 특정 유저의 전체 내역 조회 (필요할 때 사용)
     List<Transaction> findByUserId(Long userId);
+
+    long countByUserIdAndDateTimeBetween(Long userId,
+                                         LocalDateTime start,
+                                         LocalDateTime end);
+
+    // 특정 기간 "충동 소비" count
+    long countByUserIdAndPlanTypeAndDateTimeBetween(
+            Long userId,
+            Transaction.PlanType impulseOrPlanned,
+            LocalDateTime start,
+            LocalDateTime end
+    );
+
 }

@@ -8,6 +8,7 @@ import com.example.demo.calendar.repository.TransactionRepository;
 import com.example.demo.calendar.service.TransactionService;
 import com.example.demo.calendar.service.DaySummaryService;
 import com.example.demo.calendar.service.ReportService;
+import com.example.demo.calendar.dto.MonthlyCountResponse;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -92,4 +93,14 @@ public class CalendarController {
     ) {
         return reportService.getReport(userId, year, month);
     }
+
+    @GetMapping("/count/{year}/{month}")
+    public MonthlyCountResponse getMonthlyCounts(
+            @AuthenticationPrincipal Long userId,
+            @PathVariable int year,
+            @PathVariable int month
+    ) {
+        return transactionService.getMonthlyCounts(userId, year, month);
+    }
+
 }

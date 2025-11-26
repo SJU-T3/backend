@@ -25,7 +25,7 @@ public class Transaction {
     private Integer price;
 
     @Enumerated(EnumType.STRING)
-    private PlanType impulseOrPlanned;
+    private PlanType planType;
 
     private String memo;
 
@@ -99,12 +99,12 @@ public class Transaction {
         this.price = price;
     }
 
-    public PlanType getImpulseOrPlanned() {
-        return impulseOrPlanned;
+    public PlanType getPlanType() {
+        return planType;
     }
 
-    public void setImpulseOrPlanned(PlanType impulseOrPlanned) {
-        this.impulseOrPlanned = impulseOrPlanned;
+    public void setPlanType(PlanType planType) {
+        this.planType = planType;
     }
 
     public String getMemo() {
@@ -142,13 +142,15 @@ public class Transaction {
         TRAVEL("여행/숙박"),
         DAILY_NECESSITIES("생필품"),
         FINANCE("금융/보험/세금/통신비"),
+        ETC_EXPENSE("기타 지출"),
 
         // 수입 카테고리
         SALARY("월급"),
         ALLOWANCE("용돈"),
         REFUND("환불"),
         INTEREST("이자/적금만기"),
-        ETC("기타");
+        ETC("기타"),
+        SIDE_INCOME("부수입");
 
         private final String displayName;
 
