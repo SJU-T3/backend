@@ -1,15 +1,15 @@
 package com.example.demo.chat.dto;
 
-import lombok.Builder;
+import com.example.demo.chat.entity.CharacterType;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
-
 @Getter
-@Builder
+@AllArgsConstructor
 public class ChatRoomSummaryDto {
+
     private Long roomId;
     private String title;
     private String lastMessagePreview;
-    private LocalDateTime lastMessageAt;
+    private CharacterType character;  // ⭐ ENUM 적용
 }
