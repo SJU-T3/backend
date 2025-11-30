@@ -22,7 +22,6 @@ public class ChatController {
 
     @GetMapping("/rooms")
     public List<ChatRoomSummaryDto> getRooms(@AuthenticationPrincipal Long userId) {
-        System.out.println(">>> ChatController userId = " + userId);
         return chatService.getChatRooms(userId);
     }
 
