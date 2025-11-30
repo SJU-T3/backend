@@ -1,5 +1,6 @@
 package com.example.demo.calendar.controller;
 
+import com.example.demo.calendar.dto.TransactionRequest;
 import com.example.demo.calendar.dto.MonthlyResponse;
 import com.example.demo.calendar.entity.Transaction;
 import com.example.demo.calendar.entity.DaySummary;
@@ -42,8 +43,26 @@ public class CalendarController {
     @PostMapping("/transaction")
     public Transaction createTransaction(
             @AuthenticationPrincipal Long userId,
-            @RequestBody Transaction tx
+            @RequestBody TransactionRequest req
     ) {
+
+        // ★ 엔티티로 변환 (enum 변환 직접 처리 → 오류 절대 안 생김)
+        Transaction tx = new Transaction();
+        tx.setItemName(req.itemName);
+        tx.setMemo(req.memo);
+        tx.setPrice(req.price);
+        tx.setDateTime(req.dateTime);
+
+        // ENUM 변환
+        tx.setCategory(Transaction.CategoryType.valueOf(req.category));
+        tx.setIncomeOrExpense(Transaction.IncomeType.valueOf(req.incomeOrExpense));
+
+        if (req.planType != null) {
+            tx.setPlanType(Transaction.PlanType.valueOf(req.planType));
+        } else {
+            tx.setPlanType(null);
+        }
+
         return transactionService.save(userId, tx);
     }
 
