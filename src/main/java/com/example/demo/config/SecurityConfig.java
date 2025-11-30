@@ -79,7 +79,7 @@ public class SecurityConfig {
                                 "http://13.125.17.236",           // 운영 서버 IP
                                 "http://13.125.17.236:8080"       // 운영 서버 IP:포트
                         )
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
                         .allowedHeaders("*")
                         // 인증 정보를 포함한 요청(JWT, 쿠키 등)을 허용
                         .allowCredentials(true);
