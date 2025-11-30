@@ -11,7 +11,7 @@ public class PromptBuilder {
 
         Map<Transaction.CategoryType, Long> categoryTotals =
                 transactions.stream()
-                        .filter(t -> t.getIncomeOrExpense() == Transaction.IncomeType.EXPENSE)
+                        .filter(t -> t.getIncomeType() == Transaction.IncomeType.EXPENSE)
                         .collect(Collectors.groupingBy(
                                 Transaction::getCategory,
                                 Collectors.summingLong(Transaction::getPrice)

@@ -55,7 +55,7 @@ public class CalendarController {
 
         // ENUM 변환
         tx.setCategory(Transaction.CategoryType.valueOf(req.category));
-        tx.setIncomeOrExpense(Transaction.IncomeType.valueOf(req.incomeOrExpense));
+        tx.setIncomeType(Transaction.IncomeType.valueOf(req.incomeOrExpense));
 
         if (req.planType != null) {
             tx.setPlanType(Transaction.PlanType.valueOf(req.planType));

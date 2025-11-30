@@ -44,17 +44,17 @@ public class TransactionService {
                 tx.getCategory() == Transaction.CategoryType.ETC ||
                 tx.getCategory() == Transaction.CategoryType.SIDE_INCOME) {
 
-            tx.setIncomeOrExpense(Transaction.IncomeType.INCOME);
+            tx.setIncomeType(Transaction.IncomeType.INCOME);
         } else {
-            tx.setIncomeOrExpense(Transaction.IncomeType.EXPENSE);
+            tx.setIncomeType(Transaction.IncomeType.EXPENSE);
         }
 
-        System.out.println("[TX] auto-detected incomeOrExpense = " + tx.getIncomeOrExpense());
+        System.out.println("[TX] auto-detected incomeOrExpense = " + tx.getIncomeType());
 
         // =========================================================
         // ⭐ 수입이면 planType 제거 (null 설정)
         // =========================================================
-        if (tx.getIncomeOrExpense() == Transaction.IncomeType.INCOME) {
+        if (tx.getIncomeType() == Transaction.IncomeType.INCOME) {
             tx.setPlanType(null);
         }
 
@@ -71,7 +71,7 @@ public class TransactionService {
         LocalDate date = tx.getDateTime().toLocalDate();
         LocalDate monthKey = date.withDayOfMonth(1);
 
-        if (tx.getIncomeOrExpense() == Transaction.IncomeType.INCOME) {
+        if (tx.getIncomeType() == Transaction.IncomeType.INCOME) {
 
             daySummaryService.addIncome(userId, date, tx.getPrice());
             monthlySummaryService.addIncome(userId, monthKey, tx.getPrice());
@@ -94,7 +94,7 @@ public class TransactionService {
         LocalDateTime end = startDate.plusMonths(1).atStartOfDay();
 
         long totalExpense = transactionRepository
-                .countByUserIdAndIncomeOrExpenseAndDateTimeBetween(
+                .countByUserIdAndIncomeTypeAndDateTimeBetween(
                         userId,
                         Transaction.IncomeType.EXPENSE,
                         start,

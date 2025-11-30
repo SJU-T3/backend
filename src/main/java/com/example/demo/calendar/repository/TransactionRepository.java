@@ -30,7 +30,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
             LocalDateTime end
     );
 
-    long countByUserIdAndIncomeOrExpenseAndDateTimeBetween(
+    long countByUserIdAndIncomeTypeAndDateTimeBetween(
             Long userId,
             Transaction.IncomeType incomeOrExpense,
             LocalDateTime start,

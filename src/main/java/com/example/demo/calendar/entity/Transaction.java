@@ -15,7 +15,8 @@ public class Transaction {
     private LocalDateTime dateTime;
 
     @Enumerated(EnumType.STRING)
-    private IncomeType incomeOrExpense;
+    @Column(name = "income_or_expense")
+    private IncomeType incomeType;
 
     @Enumerated(EnumType.STRING)
     private CategoryType category;
@@ -67,14 +68,13 @@ public class Transaction {
         this.dateTime = dateTime;
     }
 
-    public IncomeType getIncomeOrExpense() {
-        return incomeOrExpense;
+    public IncomeType getIncomeType() {
+        return incomeType;
     }
 
-    public void setIncomeOrExpense(IncomeType incomeOrExpense) {
-        this.incomeOrExpense = incomeOrExpense;
+    public void setIncomeType(IncomeType incomeType) {
+        this.incomeType = incomeType;
     }
-
     public CategoryType getCategory() {
         return category;
     }
