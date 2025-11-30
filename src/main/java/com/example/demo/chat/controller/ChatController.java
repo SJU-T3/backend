@@ -4,6 +4,7 @@ import com.example.demo.chat.dto.ChatResponseDto;
 import com.example.demo.chat.dto.ChatRoomSummaryDto;
 import com.example.demo.chat.dto.NewChatRequest;
 import com.example.demo.chat.dto.SendMessageRequest;
+import com.example.demo.chat.dto.UpdateCharacterRequest;
 import com.example.demo.chat.entity.CharacterType;
 import com.example.demo.chat.service.ChatService;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +12,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/chat")
@@ -22,7 +22,6 @@ public class ChatController {
 
     @GetMapping("/rooms")
     public List<ChatRoomSummaryDto> getRooms(@AuthenticationPrincipal Long userId) {
-        System.out.println(">>> ChatController userId = " + userId);
         return chatService.getChatRooms(userId);
     }
 
@@ -52,15 +51,15 @@ public class ChatController {
     }
 
     // ============================================
-    // ⭐ 캐릭터 변경 ENUM 적용
+    // ⭐ 캐릭터 변경 ENUM 적용 — DTO 방식
     // ============================================
     @PatchMapping("/rooms/{roomId}/character")
     public ChatRoomSummaryDto updateCharacter(
             @AuthenticationPrincipal Long userId,
             @PathVariable Long roomId,
-            @RequestBody Map<String, String> body
+            @RequestBody UpdateCharacterRequest req
     ) {
-        CharacterType character = CharacterType.valueOf(body.get("character"));
+        CharacterType character = req.getCharacter();
         return chatService.updateCharacter(userId, roomId, character);
     }
 }
