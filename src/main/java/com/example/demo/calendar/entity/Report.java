@@ -20,6 +20,9 @@ public class Report {
     private String summary;  // GPT가 준 소비 리포트 요약
 
     @Column(columnDefinition = "TEXT")
+    private String summary2;  // GPT가 준 소비 리포트 요약
+
+    @Column(columnDefinition = "TEXT")
     private String categoryFeedback; // JSON string
 
     public Long getUserId() { return userId; }
@@ -33,6 +36,9 @@ public class Report {
 
     public String getSummary() { return summary; }
     public void setSummary(String summary) { this.summary = summary; }
+
+    public String getSummary2() { return summary2; }
+    public void setSummary2(String summary) { this.summary2 = summary2; }
 
     public String getCategoryFeedback() { return categoryFeedback; }
     public void setCategoryFeedback(String categoryFeedback) { this.categoryFeedback = categoryFeedback; }

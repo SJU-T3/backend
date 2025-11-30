@@ -64,6 +64,7 @@ public class ReportService {
         }
 
         String summary = json.getString("summary");
+        String summary2 = json.getString("summary2");
         JSONObject feedback = json.getJSONObject("category_feedback");
 
         // 리포트 저장 또는 업데이트
@@ -75,6 +76,7 @@ public class ReportService {
         report.setMonth("%04d-%02d".formatted(year, month));
         report.setUptoDate(LocalDateTime.now());
         report.setSummary(summary);
+        report.setSummary2(summary2);
         report.setCategoryFeedback(feedback.toString());
 
         return reportRepository.save(report);
@@ -111,6 +113,7 @@ public class ReportService {
         JSONObject json = new JSONObject();
         json.put("month", report.getMonth());
         json.put("summary", report.getSummary());
+        json.put("summary2", report.getSummary2());
 
         try {
             json.put("category_feedback", new JSONObject(report.getCategoryFeedback()));
