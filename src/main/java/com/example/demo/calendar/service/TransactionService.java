@@ -42,7 +42,7 @@ public class TransactionService {
                 tx.getCategory() == Transaction.CategoryType.REFUND ||
                 tx.getCategory() == Transaction.CategoryType.INTEREST ||
                 tx.getCategory() == Transaction.CategoryType.ETC ||
-                tx.getCategory() == Transaction.CategoryType.SIDE_INCOME) {
+                tx.getCategory() == Transaction.CategoryType.SIDE) {
 
             tx.setIncomeType(Transaction.IncomeType.INCOME);
         } else {

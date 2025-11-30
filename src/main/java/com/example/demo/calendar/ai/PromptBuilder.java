@@ -22,7 +22,7 @@ public class PromptBuilder {
                 응답은 해요체로 끝나야하고, 친근한 말투면 좋겠어.
                 응답은 반드시 다음 구조를 가진 JSON 객체여야 합니다:
                 - "summary": 한 줄 요약
-                - "summary2" : 세 줄 요약
+                - "summary_detailed" : 세 줄 요약
                 - "category_feedback": 각 카테고리(식비, 패션 등)에 대한 평가와 조언을 담은 객체
 
                 총 수입: %d

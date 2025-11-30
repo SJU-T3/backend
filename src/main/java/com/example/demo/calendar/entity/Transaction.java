@@ -150,7 +150,7 @@ public class Transaction {
         REFUND("환불"),
         INTEREST("이자/적금만기"),
         ETC("기타"),
-        SIDE_INCOME("부수입");
+        SIDE("부수입");
 
         private final String displayName;
 
