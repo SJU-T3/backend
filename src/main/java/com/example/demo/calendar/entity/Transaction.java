@@ -15,10 +15,11 @@ public class Transaction {
     private LocalDateTime dateTime;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "income_or_expense")
+    @Column(name = "income_or_expense",length = 20)
     private IncomeType incomeType;
 
     @Enumerated(EnumType.STRING)
+    @Column(length = 50)
     private CategoryType category;
 
     private String itemName;
