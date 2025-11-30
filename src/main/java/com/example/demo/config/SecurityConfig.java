@@ -9,8 +9,10 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
 
 /**
  * Spring Security 설정 클래스입니다.
@@ -26,6 +28,20 @@ public class SecurityConfig {
     public SecurityConfig(JwtTokenProvider jwtTokenProvider) {
         this.jwtTokenProvider = jwtTokenProvider;
     }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.addAllowedOriginPattern("*");   // 필요하면 특정 도메인만 추가해도 됨
+        config.addAllowedMethod("*");
+        config.addAllowedHeader("*");
+        config.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
+    }
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -67,23 +83,23 @@ public class SecurityConfig {
      * CORS (Cross-Origin Resource Sharing) 설정을 위한 Bean입니다.
      * 프론트엔드 환경에서 백엔드 API에 접근할 수 있도록 허용합니다.
      */
-    @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**") // 모든 경로에 대해
-                        .allowedOrigins(
-                                "http://localhost:3000",          // 로컬 개발
-                                "https://nottoday-front.vercel.app", // 프론트 배포 주소 (예시)
-                                "http://13.125.17.236",           // 운영 서버 IP
-                                "http://13.125.17.236:8080"       // 운영 서버 IP:포트
-                        )
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
-                        .allowedHeaders("*")
+    //@Bean
+    //public WebMvcConfigurer corsConfigurer() {
+        //return new WebMvcConfigurer() {
+            //@Override
+            //public void addCorsMappings(CorsRegistry registry) {
+                //registry.addMapping("/**") // 모든 경로에 대해
+                        //.allowedOrigins(
+                                //"http://localhost:3000",          // 로컬 개발
+                                //"https://nottoday-front.vercel.app", // 프론트 배포 주소 (예시)
+                                //"http://13.125.17.236",           // 운영 서버 IP
+                                //"http://13.125.17.236:8080"       // 운영 서버 IP:포트
+                        //)
+                        //.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
+                        //.allowedHeaders("*")
                         // 인증 정보를 포함한 요청(JWT, 쿠키 등)을 허용
-                        .allowCredentials(true);
-            }
-        };
-    }
+                        //.allowCredentials(true);
+            //}
+        //};
+    //}
 }
