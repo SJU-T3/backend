@@ -93,7 +93,13 @@ public class TransactionService {
         LocalDateTime start = startDate.atStartOfDay();
         LocalDateTime end = startDate.plusMonths(1).atStartOfDay();
 
-        long total = transactionRepository.countByUserIdAndDateTimeBetween(userId, start, end);
+        long totalExpense = transactionRepository
+                .countByUserIdAndIncomeOrExpenseAndDateTimeBetween(
+                        userId,
+                        Transaction.IncomeType.EXPENSE,
+                        start,
+                        end
+                );
         long impulse = transactionRepository.countByUserIdAndPlanTypeAndDateTimeBetween(
                 userId,
                 Transaction.PlanType.IMPULSE,
@@ -107,7 +113,7 @@ public class TransactionService {
                 end
         );
 
-        return new MonthlyCountResponse(total, impulse, planned);
+        return new MonthlyCountResponse(totalExpense, impulse, planned);
     }
 
 }

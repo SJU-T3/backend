@@ -30,4 +30,11 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
             LocalDateTime end
     );
 
+    long countByUserIdAndIncomeOrExpenseAndDateTimeBetween(
+            Long userId,
+            Transaction.IncomeType incomeOrExpense,
+            LocalDateTime start,
+            LocalDateTime end
+    );
+
 }
