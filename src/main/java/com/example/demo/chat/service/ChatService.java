@@ -9,6 +9,8 @@ import com.example.demo.chat.entity.ChatRoom;
 import com.example.demo.chat.entity.CharacterType;
 import com.example.demo.chat.repository.ChatMessageRepository;
 import com.example.demo.chat.repository.ChatRoomRepository;
+import com.example.demo.chat.ai.ChatAiClient;
+import com.example.demo.chat.dto.ChatMessageDto;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,7 +23,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class ChatService {
-
+    private final ChatAiClient chatAiClient;
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
 
@@ -69,6 +71,23 @@ public class ChatService {
                 .build();
 
         chatMessageRepository.save(userMessage);
+        String aiReply;
+        try {
+            aiReply = chatAiClient.invoke(req.getMessage());
+        } catch (Exception e) {
+            aiReply = "안녕하세요! 무엇을 도와드릴까요?";
+        }
+
+        ChatMessage aiMessage = ChatMessage.builder()
+                .chatRoom(room)
+                .role(ChatMessage.Role.ASSISTANT)
+                .content(aiReply)
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        chatMessageRepository.save(aiMessage);
+
+        room.setLastMessagePreview(aiReply);
 
         // AI 응답 생성 등 기존 로직 그대로
         return createResponseDto(room.getId());
@@ -92,6 +111,21 @@ public class ChatService {
                 .build();
 
         chatMessageRepository.save(userMessage);
+
+        String aiReply;
+        try {
+            aiReply = chatAiClient.invoke(req.getMessage());
+        } catch (Exception e) {
+            aiReply = "죄송해요! 잠시 오류가 발생했어요. 다시 시도해주세요.";
+        }
+        ChatMessage aiMessage = ChatMessage.builder()
+                .chatRoom(room)
+                .role(ChatMessage.Role.ASSISTANT)
+                .content(aiReply)
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        chatMessageRepository.save(aiMessage);
 
         // 채팅방 요약 업데이트
         room.setLastMessagePreview(req.getMessage());
@@ -130,6 +164,35 @@ public class ChatService {
     // 내부 공통 응답 생성 (기존 그대로)
     // ======================================================
     private ChatResponseDto createResponseDto(Long roomId) {
-        return null; // 사용자의 기존 로직 유지
+        ChatRoom room = chatRoomRepository.findById(roomId)
+                .orElseThrow(() -> new IllegalArgumentException("채팅방을 찾을 수 없습니다."));
+
+        List<ChatMessage> messageEntities =
+                chatMessageRepository.findByChatRoomIdOrderByCreatedAtAsc(roomId);
+
+        // Entity → DTO 변환
+        List<ChatMessageDto> messageDtos = messageEntities.stream()
+                .map(m -> ChatMessageDto.builder()
+                        .id(m.getId())
+                        .role(m.getRole().name())
+                        .content(m.getContent())
+                        .createdAt(m.getCreatedAt())
+                        .build()
+                )
+                .toList();
+
+        // 마지막 AI 메시지 찾기
+        String lastAiContent = messageEntities.stream()
+                .filter(m -> m.getRole() == ChatMessage.Role.ASSISTANT)
+                .reduce((first, second) -> second)  // 마지막 요소 선택
+                .map(ChatMessage::getContent)
+                .orElse(null);
+
+        return ChatResponseDto.builder()
+                .roomId(room.getId())
+                .roomTitle(room.getTitle())
+                .messages(messageDtos)
+                .lastAiMessage(lastAiContent)
+                .build();
     }
 }

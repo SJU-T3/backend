@@ -29,6 +29,7 @@ public class ChatRoom {
 
     // ⭐ ENUM 적용
     @Enumerated(EnumType.STRING)
+    @Column(name = "character_type")   // ⭐ 반드시 추가
     private CharacterType character;
 
     @PrePersist

@@ -32,12 +32,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
+        String header = request.getHeader("Authorization");
+        System.out.println(" [JWT FILTER] Authorization Header = " + header);
+
         // JWT 토큰을 요청에서 추출
         String token = getJwtFromRequest(request);
+        System.out.println("[JWT FILTER] Extracted Token = " + token);
         if (token != null && jwtTokenProvider.validateToken(token)) {
             // 토큰이 유효하면 인증 처리
+            System.out.println("[JWT FILTER] Token is valid!");
             Long userId = jwtTokenProvider.getUserId(token);
-
+            System.out.println("[JWT FILTER] Set Authentication userId = " + userId);
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(
                             userId,        // principal: userId만 넣자
@@ -51,6 +56,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             // 인증 정보를 SecurityContext에 저장
             SecurityContextHolder.getContext().setAuthentication(authentication);
+        }else {
+            // 토큰이 없거나 유효하지 않을 때
+            System.out.println("[JWT FILTER] Token invalid or missing");
         }
 
         // 필터 체인 계속 진행
