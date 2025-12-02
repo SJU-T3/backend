@@ -42,11 +42,11 @@ public class ReportService {
         MonthlyResponse monthly = daySummaryService.getMonthlySummaryWithTotal(userId, year, month);
 
         LocalDate start = LocalDate.of(year, month, 1);
-        LocalDate end = LocalDate.now();
+        LocalDate end = start.plusMonths(1);
 
         List<Transaction> transactions =
                 transactionRepository.findByUserIdAndDateTimeBetween(
-                        userId, start.atStartOfDay(), end.atTime(23,59)
+                        userId, start.atStartOfDay(), end.atStartOfDay()
                 );
 
         // GPT 프롬프트 생성
