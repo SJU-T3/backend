@@ -11,13 +11,19 @@ import com.example.demo.chat.repository.ChatMessageRepository;
 import com.example.demo.chat.repository.ChatRoomRepository;
 import com.example.demo.chat.ai.ChatAiClient;
 import com.example.demo.chat.dto.ChatMessageDto;
+import com.example.demo.calendar.entity.Goal;
+import com.example.demo.calendar.entity.Transaction;
+import com.example.demo.calendar.repository.TransactionRepository;
+import com.example.demo.calendar.service.GoalService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Comparator;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,7 +32,8 @@ public class ChatService {
     private final ChatAiClient chatAiClient;
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
-
+    private final GoalService goalService;
+    private final TransactionRepository transactionRepository;
     // ======================================================
     // 1) 채팅방 목록 조회
     // ======================================================
@@ -73,7 +80,8 @@ public class ChatService {
         chatMessageRepository.save(userMessage);
         String aiReply;
         try {
-            aiReply = chatAiClient.invoke(req.getMessage());
+            String prompt = buildPrompt(userId, req.getMessage());
+            aiReply = chatAiClient.invoke(prompt);
         } catch (Exception e) {
             aiReply = "안녕하세요! 무엇을 도와드릴까요?";
         }
@@ -111,10 +119,10 @@ public class ChatService {
                 .build();
 
         chatMessageRepository.save(userMessage);
-
         String aiReply;
         try {
-            aiReply = chatAiClient.invoke(req.getMessage());
+            String prompt = buildPrompt(userId, req.getMessage());
+            aiReply = chatAiClient.invoke(prompt);
         } catch (Exception e) {
             aiReply = "죄송해요! 잠시 오류가 발생했어요. 다시 시도해주세요.";
         }
@@ -195,4 +203,35 @@ public class ChatService {
                 .lastAiMessage(lastAiContent)
                 .build();
     }
-}
+    private String buildPrompt(Long userId, String userMessage) {
+
+        // 이번 달 목표 조회
+        LocalDate month = LocalDate.now().withDayOfMonth(1);
+        Goal goal = goalService.getMonthlyGoal(userId, month);
+        String goalText = (goal != null) ? goal.getGoal() : "목표 없음";
+
+        // 최근 소비 5개 조회
+        List<Transaction> recent = transactionRepository
+                .findByUserId(userId)
+                .stream()
+                .sorted(Comparator.comparing(Transaction::getDateTime).reversed())
+                .limit(5)
+                .toList();
+
+        String recentText = recent.stream()
+                .map(t -> t.getItemName() + "(" + t.getPrice() + "원)")
+                .collect(Collectors.joining(", "));
+
+        return """
+                [이번 달 목표]: %s
+                [최근 소비]: %s
+                
+                사용자 말:
+                %s
+                
+                → 위 정보를 참고해서,
+                목표 방향에 맞춰 부드럽고 티키타카 느낌으로 대답해주세요
+                """.formatted(goalText, recentText, userMessage);
+    }
+
+    }
